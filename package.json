@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "test:db": "./supabase/tests/run_db_tests.sh"
+    "test:db": "./supabase/tests/run_db_tests.sh",
+    "db:bundle": "./scripts/bundle-sql.sh"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",

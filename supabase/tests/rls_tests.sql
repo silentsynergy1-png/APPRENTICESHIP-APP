@@ -61,8 +61,15 @@ do $$ begin
 end $$;
 
 -- Audit trail: editing a session records before/after
-update public.work_sessions set ended_at = ended_at + interval '15 minutes'
+update public.work_sessions set ended_at = ended_at + interval '15 minutes', change_reason = 'Forgot to clock out'
 where id = 'a0000000-0000-0000-0000-000000000003';
+update public.work_sessions set notes = 'n', approval_status = 'submitted'
+where id = 'a0000000-0000-0000-0000-000000000003';
+do $$ begin
+  assert (select reason from public.timesheet_adjustments where changes ? 'ended_at') = 'Forgot to clock out', 'reason recorded';
+  assert (select reason from public.timesheet_adjustments where changes ? 'approval_status') is null, 'reason not reused';
+  assert (select change_reason from public.work_sessions where id = 'a0000000-0000-0000-0000-000000000003') is null, 'reason not stored on row';
+end $$;
 do $$ begin
   assert (select count(*) from public.timesheet_adjustments where action = 'update'
           and changes ? 'ended_at') = 1, 'audit row written for update';
