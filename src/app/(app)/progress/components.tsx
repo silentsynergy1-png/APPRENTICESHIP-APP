@@ -108,7 +108,7 @@ export function CompetencyBoard({
 }) {
   const [filter, setFilter] = useState<"all" | "outstanding" | "tafe" | "signoff">("all");
   const [selected, setSelected] = useState<Competency | null>(null);
-  const [editing, setEditing] = useState<Competency | "new" | null>(null);
+  const [editing, setEditing] = useState<Competency | { categoryId: string | null } | null>(null);
   const [catOpen, setCatOpen] = useState(false);
   const { run } = useActionCall();
 
@@ -143,19 +143,19 @@ export function CompetencyBoard({
           <Button variant="outline" size="sm" onClick={() => setCatOpen(true)}>
             <FolderPlus /> Categories
           </Button>
-          <Button size="sm" onClick={() => setEditing("new")}>
+          <Button size="sm" onClick={() => setEditing({ categoryId: null })}>
             <Plus /> Competency
           </Button>
         </div>
       </div>
 
-      {competencies.length === 0 ? (
+      {competencies.length === 0 && categories.length === 0 ? (
         <EmptyState
           icon={<Target />}
           title="Build your competency checklist"
           description="Add the units from your training plan and the practical skills you need to learn. Group them however suits your qualification."
           action={
-            <Button onClick={() => setEditing("new")}>
+            <Button onClick={() => setEditing({ categoryId: null })}>
               <Plus /> Add first competency
             </Button>
           }
@@ -176,6 +176,9 @@ export function CompetencyBoard({
                       </div>
                     </div>
                     {g.items.length ? <ProgressBar value={(done / g.items.length) * 100} className="w-24 sm:w-40" tone={done === g.items.length ? "success" : "primary"} /> : null}
+                    <Button size="sm" variant="ghost" aria-label={`Add competency to ${g.name}`} onClick={() => setEditing({ categoryId: g.id === "none" ? null : g.id })}>
+                      <Plus /> Add
+                    </Button>
                   </div>
                   {g.items.length ? (
                     <ul className="divide-y divide-border border-t border-border">
@@ -250,8 +253,17 @@ export function CompetencyBoard({
   );
 }
 
-function CompetencyEditor({ competency, categories, onClose }: { competency: Competency | "new" | null; categories: CompetencyCategory[]; onClose: () => void }) {
-  const c = competency === "new" ? null : competency;
+function CompetencyEditor({
+  competency,
+  categories,
+  onClose,
+}: {
+  competency: Competency | { categoryId: string | null } | null;
+  categories: CompetencyCategory[];
+  onClose: () => void;
+}) {
+  const c = competency && "id" in competency ? competency : null;
+  const defaultCategory = c ? c.category_id : competency && "categoryId" in competency ? competency.categoryId : null;
   return (
     <Dialog open={competency !== null} onOpenChange={(o) => !o && onClose()}>
       <DialogContent title={c ? "Edit competency" : "Add competency"} description="Your own record of what you're learning. It isn't an official assessment.">
@@ -266,7 +278,7 @@ function CompetencyEditor({ competency, categories, onClose }: { competency: Com
               <Input id="comp-code" name="code" defaultValue={c?.code ?? ""} />
             </Field>
             <Field label="Category" htmlFor="comp-cat">
-              <NativeSelect id="comp-cat" name="category_id" defaultValue={c?.category_id ?? ""}>
+              <NativeSelect id="comp-cat" name="category_id" defaultValue={defaultCategory ?? ""}>
                 <option value="">Uncategorised</option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>

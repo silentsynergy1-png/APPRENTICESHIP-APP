@@ -11,6 +11,7 @@ const check = (name, cond, detail = "") => {
   results.push({ name, ok: Boolean(cond) });
   console.log(`${cond ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`);
 };
+const vis = (l) => l.first().waitFor({ timeout: 10000 }).then(() => true).catch(() => false);
 const isoDaysFromNow = (n) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
 
 (async () => {
@@ -38,7 +39,7 @@ const isoDaysFromNow = (n) => new Date(Date.now() + n * 86_400_000).toISOString(
   check("progress page renders with rings", await page.getByText("time elapsed").isVisible());
   check("year shown", await page.getByText("2nd of 4").isVisible());
   check("disclaimer shown", await page.getByText(/isn't an official assessment/).isVisible());
-  check("starter categories created", await page.getByText("Cabling & wiring").isVisible());
+  check("starter categories created", await vis(page.getByText("Cabling & wiring")));
 
   // Add competency
   await page.getByRole("button", { name: "Competency", exact: true }).click();
@@ -49,7 +50,7 @@ const isoDaysFromNow = (n) => new Date(Date.now() + n * 86_400_000).toISOString(
   await dlg.getByText("This is a TAFE / training unit").click();
   await dlg.getByRole("button", { name: "Save" }).click();
   await page.getByText("Competency added").waitFor();
-  check("competency added", await page.getByText("Cable installation and termination").isVisible());
+  check("competency added", await vis(page.getByText("Cable installation and termination")));
 
   await page.getByRole("button", { name: "Competency", exact: true }).click();
   dlg = page.getByRole("dialog");
@@ -86,7 +87,7 @@ const isoDaysFromNow = (n) => new Date(Date.now() + n * 86_400_000).toISOString(
   await dlg.locator("#as-date").fill(isoDaysFromNow(3));
   await dlg.getByRole("button", { name: "Save" }).click();
   await page.getByText("Assessment added").waitFor();
-  check("assessment listed", await page.getByText("Practical: switchboard assessment").isVisible());
+  check("assessment listed", await vis(page.getByText("Practical: switchboard assessment")));
   await page.goto(`${BASE}/dashboard`);
   check("assessment in dashboard Upcoming", await page.locator("main").getByText("Practical: switchboard assessment").first().isVisible());
   check("assessment notification generated", await page.locator("main").getByText(/Assessment due: Practical/).isVisible());
@@ -110,7 +111,7 @@ const isoDaysFromNow = (n) => new Date(Date.now() + n * 86_400_000).toISOString(
   await dlg.getByRole("button", { name: "Add milestone" }).click();
   await page.getByText("Milestone added").waitFor();
   await page.getByRole("tab", { name: "Timeline" }).click();
-  check("milestone on timeline", await page.getByText("First solo fit-off").isVisible());
+  check("milestone on timeline", await vis(page.getByText("First solo fit-off")));
   await page.getByRole("tab", { name: /Competencies/ }).click();
   await page.screenshot({ path: `${SHOTS}/p1-progress.png`, fullPage: true });
 
