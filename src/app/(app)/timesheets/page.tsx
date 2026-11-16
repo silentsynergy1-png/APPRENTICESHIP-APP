@@ -16,8 +16,7 @@ import {
   sessionWorkedMinutes,
   todayKey,
   weekStartKey,
-  weekdayOfKey,
-} from "@/lib/time/calc";
+  weekdayOfKey, requestNow } from "@/lib/time/calc";
 import type { ApprovalStatus, SessionWithBreaks } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { AddSessionButton } from "./session-form";
@@ -394,7 +393,7 @@ function Total({ label, value, strong }: { label: string; value: number; strong?
 
 function SessionRow({ s, tz, site, employer }: { s: SessionWithBreaks; tz: string; site?: string; employer?: string }) {
   const worked = sessionWorkedMinutes(s, s.breaks);
-  const brk = breakMinutes(s, s.breaks, Date.now(), "unpaid");
+  const brk = breakMinutes(s, s.breaks, requestNow(), "unpaid");
   const overnight = s.ended_at && localDateKey(new Date(s.ended_at).getTime(), tz) !== localDateKey(new Date(s.started_at).getTime(), tz);
   return (
     <li>

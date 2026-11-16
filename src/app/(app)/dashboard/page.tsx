@@ -19,7 +19,7 @@ import { ChartLegend, HoursChart } from "@/components/charts/hours-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge, EmptyState, ProgressRing } from "@/components/ui/misc";
 import { Button } from "@/components/ui/button";
-import { addDaysToKey, formatLocal, localMidnightMs, formatMinutes, todayKey, weekStartKey } from "@/lib/time/calc";
+import { addDaysToKey, formatLocal, localMidnightMs, formatMinutes, todayKey, weekStartKey, requestNow } from "@/lib/time/calc";
 import { apprenticeshipTimeline, ordinal } from "@/lib/apprenticeship";
 import { cn, firstName, formatCurrency } from "@/lib/utils";
 import type { DashboardCard, DiaryEntry, Employer, Expense, JobSite, NotificationRow } from "@/lib/types";
@@ -37,7 +37,7 @@ export default async function DashboardPage() {
   const ctx = await requireAppContext();
   const { supabase, profile, rules, entitlements } = ctx;
   const tz = profile.timezone;
-  const now = Date.now();
+  const now = requestNow();
   const today = todayKey(tz, now);
   const weekStart = weekStartKey(today, rules.week_starts_on);
   const weekEnd = addDaysToKey(weekStart, 7);

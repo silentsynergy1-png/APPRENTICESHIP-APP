@@ -285,3 +285,11 @@ export function isoToLocalInput(iso: string | null | undefined, timeZone: string
 export function todayKey(timeZone: string, now: number = Date.now()): string {
   return localDateKey(now, timeZone);
 }
+
+/**
+ * The current instant for a server render. Server components render once per request,
+ * so reading the clock here is intentional (and keeps "now" consistent within a page).
+ */
+export function requestNow(): number {
+  return Date.now();
+}

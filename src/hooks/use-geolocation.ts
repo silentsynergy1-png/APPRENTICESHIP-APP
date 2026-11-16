@@ -24,6 +24,7 @@ export function useGeolocation() {
 
   useEffect(() => {
     if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of a browser capability after hydration
       setPermission("unsupported");
       return;
     }

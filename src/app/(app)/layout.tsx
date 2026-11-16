@@ -15,7 +15,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <AppShell
-      user={{ name: ctx.profile.full_name, tier: ctx.entitlements.tier }}
+      user={{ id: ctx.userId, name: ctx.profile.full_name, tier: ctx.entitlements.tier }}
       unreadCount={unread.count ?? 0}
       features={PLANS[ctx.entitlements.tier].features}
       clock={{

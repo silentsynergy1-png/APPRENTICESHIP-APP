@@ -11,9 +11,10 @@ import { Dialog, DialogContent } from "@/components/ui/overlay";
 import { cn, initials } from "@/lib/utils";
 import type { Feature } from "@/lib/plans";
 import { MOBILE_PRIMARY, NAV_ITEMS } from "./nav-items";
+import { OfflineSync } from "@/components/offline-sync";
 
 export interface ShellProps {
-  user: { name: string | null; tier: "free" | "pro" };
+  user: { id: string; name: string | null; tier: "free" | "pro" };
   unreadCount: number;
   features: Feature[];
   clock: ClockPanelProps;
@@ -178,6 +179,8 @@ export function AppShell({ user, unreadCount, features, clock, children }: Shell
           </button>
         </div>
       </nav>
+
+      <OfflineSync userId={user.id} />
 
       <Dialog open={clockOpen} onOpenChange={setClockOpen}>
         <DialogContent title={active ? "Current session" : "Clock in"}>

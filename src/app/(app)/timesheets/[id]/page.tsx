@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, Badge } from "@/components/ui/misc";
 import { Button } from "@/components/ui/button";
 import { accuracyLabel } from "@/lib/geo/distance";
-import { breakMinutes, formatLocal, formatMinutes, isoToLocalInput, sessionWorkedMinutes } from "@/lib/time/calc";
+import { breakMinutes, formatLocal, formatMinutes, isoToLocalInput, sessionWorkedMinutes, requestNow } from "@/lib/time/calc";
 import type { Break, WorkSession } from "@/lib/types";
 import { EditSessionForm } from "../session-form";
 import { DeleteSessionButton, RemoveLocationButton } from "../buttons";
@@ -44,8 +44,8 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   const s = session as WorkSession & { breaks: Break[] };
   const sessionTz = s.timezone || tz;
   const worked = sessionWorkedMinutes(s, s.breaks);
-  const unpaid = breakMinutes(s, s.breaks, Date.now(), "unpaid");
-  const paid = breakMinutes(s, s.breaks, Date.now(), "paid");
+  const unpaid = breakMinutes(s, s.breaks, requestNow(), "unpaid");
+  const paid = breakMinutes(s, s.breaks, requestNow(), "paid");
 
   const fmtValue = (field: string, v: unknown) => {
     if (v === null || v === undefined) return "—";
