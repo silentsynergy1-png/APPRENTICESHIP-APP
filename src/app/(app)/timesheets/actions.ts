@@ -123,7 +123,7 @@ const clockInSchema = z.object({
 export type ClockInResult = { sessionId: string; startedAt: string; alreadyActive: boolean; location: LocationOutcome | null };
 
 export async function clockIn(input: z.input<typeof clockInSchema>): Promise<ActionResult<ClockInResult>> {
-  return safeAction("clockIn", async () => {
+  return safeAction<ClockInResult>("clockIn", async () => {
     const ctx = await requireUserForAction();
     const parsed = clockInSchema.safeParse(input);
     if (!parsed.success) return zodFail(parsed.error);
@@ -201,7 +201,7 @@ export type ClockOutResult = {
 };
 
 export async function clockOut(input: z.input<typeof clockOutSchema>): Promise<ActionResult<ClockOutResult>> {
-  return safeAction("clockOut", async () => {
+  return safeAction<ClockOutResult>("clockOut", async () => {
     const ctx = await requireUserForAction();
     const parsed = clockOutSchema.safeParse(input);
     if (!parsed.success) return zodFail(parsed.error);
