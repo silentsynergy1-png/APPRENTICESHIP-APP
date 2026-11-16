@@ -12,6 +12,7 @@ import { formatLocal } from "@/lib/time/calc";
 import type { DiaryEntry, DiaryPhoto } from "@/lib/types";
 import { PhotoGrid, PhotoUploader } from "../photos";
 import { DeleteEntryButton } from "./delete-entry";
+import { LogPractice, type PracticeSuggestion } from "./log-practice";
 
 export const metadata: Metadata = { title: "Diary entry" };
 
@@ -21,14 +22,29 @@ export default async function DiaryEntryPage({ params, searchParams }: { params:
   if (!z.uuid().safeParse(id).success) notFound();
   const ctx = await requireAppContext();
 
-  const [{ data: entry }, { data: photos }] = await Promise.all([
+  const [{ data: entry }, { data: photos }, { data: comps }, { data: logged }] = await Promise.all([
     ctx.supabase.from("work_diary_entries").select("*, employers(name), job_sites(name, address)").eq("id", id).maybeSingle(),
     ctx.supabase.from("diary_photos").select("*").eq("entry_id", id).order("created_at"),
+    ctx.supabase.from("competencies").select("id, title, status").neq("status", "completed").order("title").limit(300),
+    ctx.supabase.from("competency_records").select("competency_id").eq("diary_entry_id", id),
   ]);
   if (!entry) notFound();
   const e = entry as DiaryEntry & { employers: { name: string } | null; job_sites: { name: string; address: string | null } | null };
   const urls = await signedUrls(ctx, (photos ?? []).map((p) => p.storage_path as string));
   const photoViews = ((photos ?? []) as DiaryPhoto[]).map((p) => ({ id: p.id, url: urls[p.storage_path] ?? null, caption: p.caption, mime: p.mime_type }));
+
+  // Simple keyword overlap between this entry's skills/tasks and competency titles.
+  const STOP = new Set(["and", "the", "for", "with", "into", "from", "install", "installation", "work", "of", "to", "a", "in", "on"]);
+  const words = (t: string) => t.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 2 && !STOP.has(w));
+  const entryWords = new Set([...e.skills, ...e.tasks, e.title ?? ""].flatMap(words));
+  const loggedIds = new Set((logged ?? []).map((r) => r.competency_id as string));
+  const suggestions: PracticeSuggestion[] = ((comps ?? []) as { id: string; title: string; status: string }[]).map((c) => ({
+    id: c.id,
+    title: c.title,
+    status: c.status,
+    alreadyLogged: loggedIds.has(c.id),
+    matched: words(c.title).some((w) => entryWords.has(w)),
+  }));
 
   const chips = (label: string, items: string[]) =>
     items.length ? (
@@ -132,6 +148,15 @@ export default async function DiaryEntryPage({ params, searchParams }: { params:
             <PhotoGrid photos={photoViews} editable />
             {!photoViews.length ? <p className="text-[13px] text-muted-foreground">No photos yet. Snap the finished work for your records.</p> : null}
             <PhotoUploader userId={ctx.userId} entryId={e.id} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Count towards your apprenticeship</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <LogPractice entryId={e.id} entryDate={e.entry_date} suggestions={suggestions} />
           </CardContent>
         </Card>
 
