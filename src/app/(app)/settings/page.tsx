@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, Input, NativeSelect } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { InstallAppCard } from "@/components/install-prompt";
 import { STATES, TIMEZONES, TRADES } from "@/lib/constants";
 import { updateProfile } from "./actions";
 
@@ -66,6 +67,17 @@ export default async function SettingsProfilePage() {
               <SubmitButton>Save</SubmitButton>
             </div>
           </ActionForm>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <div>
+            <CardTitle>Install the app</CardTitle>
+            <CardDescription>Use Apprentice OS like a normal app, straight from your home screen.</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <InstallAppCard />
         </CardContent>
       </Card>
       <Card>

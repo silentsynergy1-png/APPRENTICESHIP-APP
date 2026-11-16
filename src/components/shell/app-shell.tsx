@@ -12,6 +12,7 @@ import { cn, initials } from "@/lib/utils";
 import type { Feature } from "@/lib/plans";
 import { MOBILE_PRIMARY, NAV_ITEMS } from "./nav-items";
 import { OfflineSync } from "@/components/offline-sync";
+import { InstallPrompt } from "@/components/install-prompt";
 
 export interface ShellProps {
   user: { id: string; name: string | null; tier: "free" | "pro" };
@@ -181,6 +182,7 @@ export function AppShell({ user, unreadCount, features, clock, children }: Shell
       </nav>
 
       <OfflineSync userId={user.id} />
+      <InstallPrompt />
 
       <Dialog open={clockOpen} onOpenChange={setClockOpen}>
         <DialogContent title={active ? "Current session" : "Clock in"}>
