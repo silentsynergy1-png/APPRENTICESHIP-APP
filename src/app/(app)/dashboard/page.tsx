@@ -10,6 +10,7 @@ import {
   MapPinned,
   Plus,
   Receipt,
+  Sparkles,
   Wrench,
 } from "lucide-react";
 import { requireAppContext } from "@/lib/auth";
@@ -381,6 +382,7 @@ export default async function DashboardPage() {
       <QuickAction href={entitlements.has("expenses") ? "/expenses?new=1" : "/settings/plan"} icon={<Receipt />} label="Add expense" />
       <QuickAction href="/tools?new=1" icon={<Wrench />} label="Add tool" />
       <QuickAction href="/progress" icon={<GraduationCap />} label="Progress" />
+      <QuickAction href="/recap" icon={<Sparkles />} label="Weekly recap" />
     </div>
   );
 
