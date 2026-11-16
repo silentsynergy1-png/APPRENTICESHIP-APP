@@ -464,7 +464,7 @@ const ASSESSMENT_TONE = { upcoming: "primary", submitted: "warning", passed: "su
 export function AssessmentList({ assessments, competencies, timezone }: { assessments: TafeAssessment[]; competencies: Competency[]; timezone: string }) {
   const [editing, setEditing] = useState<TafeAssessment | "new" | null>(null);
   const { run } = useActionCall();
-  const now = Date.now();
+  const [now] = useState(() => Date.now());
   const e = editing === "new" ? null : editing;
   const localParts = (iso: string) => {
     const f = new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date(iso));
