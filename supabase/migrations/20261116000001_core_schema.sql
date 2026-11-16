@@ -160,6 +160,8 @@ create table public.work_sessions (
   needs_review boolean not null default false,
   review_reason text check (char_length(review_reason) <= 300),
   notes text check (char_length(notes) <= 4000),
+  -- Optional note explaining the most recent edit; copied into the audit trail by trigger.
+  change_reason text check (char_length(change_reason) <= 500),
 
   -- Clock-in location (captured once, only when the user clocks in)
   start_latitude double precision check (start_latitude between -90 and 90),
@@ -260,7 +262,7 @@ begin
 
   if diff <> '{}'::jsonb then
     insert into public.timesheet_adjustments (user_id, session_id, action, changes, reason)
-    values (new.user_id, new.id, 'update', diff, nullif(current_setting('app.change_reason', true), ''));
+    values (new.user_id, new.id, 'update', diff, nullif(new.change_reason, ''));
   end if;
   return new;
 end;
