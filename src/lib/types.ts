@@ -248,7 +248,7 @@ export interface Expense {
   category: ExpenseCategory;
   description: string | null;
   work_notes: string | null;
-  items: { description: string; amount?: number | null }[];
+  items: { description: string; amount: number | null }[];
   from_ai_extraction: boolean;
   created_at: string;
 }
