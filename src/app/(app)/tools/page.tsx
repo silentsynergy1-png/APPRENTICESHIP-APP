@@ -48,7 +48,7 @@ export default async function ToolsPage({ searchParams }: { searchParams: Promis
       <PageHeader title="Tools" description="Your kit, with serial numbers, receipts and warranties in one place." actions={<NewToolButton userId={ctx.userId} autoOpen={sp.new === "1"} />} />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Stat label="Inventory value" value={formatCurrency(value)} hint={`${owned.length} tools`} />
+        <Stat label="Inventory value" value={formatCurrency(value)} hint={`${owned.length} tool${owned.length === 1 ? "" : "s"}`} />
         <Stat label="Under warranty" value={inWarranty} icon={<ShieldCheck />} />
         <Stat label="Missing" value={missing} icon={<AlertTriangle />} />
         <Stat label="Total tools" value={tools.length} icon={<Wrench />} />
