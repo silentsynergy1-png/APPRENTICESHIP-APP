@@ -374,9 +374,19 @@ export default async function DashboardPage() {
     ),
   };
 
+  const quickActions = (
+    <div key="quick-actions" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-none sm:mx-0 sm:px-0 lg:col-span-2">
+      <QuickAction href="/diary/new" icon={<BookOpenText />} label="Diary entry" />
+      <QuickAction href="/timesheets" icon={<Clock3 />} label="Timesheets" />
+      <QuickAction href={entitlements.has("expenses") ? "/expenses?new=1" : "/settings/plan"} icon={<Receipt />} label="Add expense" />
+      <QuickAction href="/tools?new=1" icon={<Wrench />} label="Add tool" />
+      <QuickAction href="/progress" icon={<GraduationCap />} label="Progress" />
+    </div>
+  );
+
   return (
     <div>
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-6 flex items-end justify-between gap-4">
         <div>
           <div className="text-[13px] text-muted-foreground">{formatLocal(now, tz, "EEEE d MMMM")}</div>
           <h1 className="mt-0.5 text-2xl font-semibold tracking-tight sm:text-[28px]">
@@ -392,15 +402,14 @@ export default async function DashboardPage() {
         <CustomiseDashboard cards={cards} />
       </div>
 
-      <div className="mb-6 flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-        <QuickAction href="/diary/new" icon={<BookOpenText />} label="Diary entry" />
-        <QuickAction href="/timesheets" icon={<Clock3 />} label="Timesheets" />
-        <QuickAction href={entitlements.has("expenses") ? "/expenses?new=1" : "/settings/plan"} icon={<Receipt />} label="Add expense" />
-        <QuickAction href="/tools?new=1" icon={<Wrench />} label="Add tool" />
-        <QuickAction href="/progress" icon={<GraduationCap />} label="Progress" />
+      <div className="grid gap-5 lg:grid-cols-2">
+        {cards.flatMap((c, i) => {
+          const node = sections[c] ?? null;
+          // Quick actions sit directly under the first card (normally the clock), so the
+          // clock-in control is the first thing on a phone screen.
+          return i === 0 ? [node, quickActions] : [node];
+        })}
       </div>
-
-      <div className="grid gap-5 lg:grid-cols-2">{cards.map((c) => sections[c] ?? null)}</div>
     </div>
   );
 }

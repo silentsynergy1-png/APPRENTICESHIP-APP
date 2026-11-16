@@ -411,15 +411,11 @@ function SessionRow({ s, tz, site, employer }: { s: SessionWithBreaks; tz: strin
             ) : null}
             {s.source === "manual" ? <Badge tone="outline">Manual</Badge> : null}
           </div>
-          <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 truncate text-[12.5px] text-muted-foreground">
-            {site || s.start_address ? (
-              <span className="inline-flex min-w-0 items-center gap-1 truncate">
-                <MapPin className="size-3 shrink-0" />
-                <span className="truncate">{site ?? s.start_address}</span>
-              </span>
-            ) : null}
-            {employer ? <span>· {employer}</span> : null}
-            {brk >= 1 ? <span>· {formatMinutes(brk)} break</span> : null}
+          <div className="mt-0.5 flex min-w-0 items-center gap-1 text-[12.5px] text-muted-foreground">
+            {site || s.start_address ? <MapPin className="size-3 shrink-0" /> : null}
+            <span className="truncate">
+              {[site ?? s.start_address, employer, brk >= 1 ? `${formatMinutes(brk)} break` : null].filter(Boolean).join(" · ") || "No site recorded"}
+            </span>
           </div>
         </div>
         <div className="text-[14px] font-semibold tabular">{formatMinutes(worked)}</div>

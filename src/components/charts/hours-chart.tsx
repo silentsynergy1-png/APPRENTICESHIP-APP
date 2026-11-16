@@ -61,6 +61,8 @@ export function HoursChart({ data, height = 200 }: { data: HoursDatum[]; height?
               fill={s.color}
               radius={i === series.length - 1 ? [6, 6, 2, 2] : [0, 0, 0, 0]}
               maxBarSize={36}
+              isAnimationActive
+              animationDuration={350}
             />
           ))}
         </BarChart>

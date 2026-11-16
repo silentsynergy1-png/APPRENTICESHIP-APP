@@ -10,7 +10,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "test:db": "./supabase/tests/run_db_tests.sh",
-    "db:bundle": "./scripts/bundle-sql.sh"
+    "db:bundle": "./scripts/bundle-sql.sh",
+    "test:e2e": "node e2e/flow.cjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",
