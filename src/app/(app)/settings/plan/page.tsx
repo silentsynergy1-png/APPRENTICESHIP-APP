@@ -3,7 +3,8 @@ import { Check, Sparkles } from "lucide-react";
 import { requireAppContext } from "@/lib/auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, Badge } from "@/components/ui/misc";
-import { PLANS, paymentsEnabled } from "@/lib/plans";
+import { PLANS, paymentsEnabled, planHighlights } from "@/lib/plans";
+import { isAiEnabled } from "@/lib/ai/config";
 import { cn } from "@/lib/utils";
 import { UpgradeButton } from "./upgrade-button";
 
@@ -37,7 +38,7 @@ export default async function PlanPage() {
                   <span className="text-[13px] text-muted-foreground">AUD / month</span>
                 </div>
                 <ul className="mt-5 space-y-2 text-[14px]">
-                  {p.highlights.map((h) => (
+                  {planHighlights(tier, isAiEnabled()).map((h) => (
                     <li key={h} className="flex gap-2">
                       <Check className="mt-0.5 size-4 shrink-0 text-primary" /> {h}
                     </li>

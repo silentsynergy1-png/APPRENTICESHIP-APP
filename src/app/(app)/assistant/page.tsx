@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Bookmark, MessageSquare, Plus } from "lucide-react";
 import { z } from "zod";
+import { redirect } from "next/navigation";
+import { isAiEnabled } from "@/lib/ai/config";
 import { requireAppContext } from "@/lib/auth";
 import { getAnthropic, tradeLabel } from "@/lib/ai/client";
 import { UpgradeGate } from "@/components/upgrade-gate";
@@ -18,6 +20,7 @@ export const metadata: Metadata = { title: "AI Assistant" };
 
 export default async function AssistantPage({ searchParams }: { searchParams: Promise<{ c?: string; saved?: string }> }) {
   const ctx = await requireAppContext();
+  if (!isAiEnabled()) redirect("/dashboard");
   if (!ctx.entitlements.has("ai_assistant")) {
     return (
       <UpgradeGate

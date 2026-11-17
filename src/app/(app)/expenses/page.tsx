@@ -8,7 +8,7 @@ import { Alert, Badge, EmptyState, PageHeader, Stat } from "@/components/ui/misc
 import { Button } from "@/components/ui/button";
 import { SpendChart, type SpendDatum } from "@/components/charts/spend-chart";
 import { EXPENSE_CATEGORIES } from "@/lib/constants";
-import { getAnthropic } from "@/lib/ai/client";
+import { isAiEnabled } from "@/lib/ai/config";
 import { todayKey } from "@/lib/time/calc";
 import type { Expense } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
@@ -32,7 +32,7 @@ export default async function ExpensesPage({ searchParams }: { searchParams: Pro
       <UpgradeGate
         title="Expenses"
         description="Track work purchases and receipts."
-        points={["Photograph receipts and let AI read them", "Monthly spending charts by category", "CSV and PDF reports for tax time", "Receipts stored privately"]}
+        points={[isAiEnabled() ? "Photograph receipts and let AI read them" : "Photograph receipts so they're never lost", "Monthly spending charts by category", "CSV and PDF reports for tax time", "Receipts stored privately"]}
       />
     );
   }
@@ -80,7 +80,7 @@ export default async function ExpensesPage({ searchParams }: { searchParams: Pro
 
   const list = (listRes.data ?? []) as (Expense & { receipts: { storage_path: string; mime_type: string } | null })[];
   const urls = await signedUrls(ctx, list.map((e) => e.receipts?.storage_path ?? "").filter(Boolean));
-  const scanAvailable = ctx.entitlements.has("receipt_scanning") && Boolean(getAnthropic());
+  const scanAvailable = ctx.entitlements.has("receipt_scanning") && isAiEnabled();
   const exportRange = month ? { from: `${month}-01`, to: new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 1)).toISOString().slice(0, 10) } : fy;
 
   return (

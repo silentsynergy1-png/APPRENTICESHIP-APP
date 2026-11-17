@@ -36,7 +36,7 @@ export async function guardAi(ctx: AppContext, feature: Feature): Promise<Anthro
     throw new AiError("AI features are part of Apprentice OS Pro.", 402, "plan");
   }
   const ai = getAnthropic();
-  if (!ai) {
+  if (!ai || process.env.AI_DISABLED === "true") {
     throw new AiError("AI isn't set up on this server yet (ANTHROPIC_API_KEY is missing).", 503, "not_configured");
   }
   const { data: allowed, error } = await ctx.supabase.rpc("consume_ai_quota", {

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { z } from "zod";
 import { requireAppContext } from "@/lib/auth";
+import { isAiEnabled } from "@/lib/ai/config";
 import { diarySuggestions } from "@/lib/data/diary";
 import type { DiaryEntry } from "@/lib/types";
 import { DiaryForm } from "../../diary-form";
@@ -33,6 +34,7 @@ export default async function EditDiaryPage({ params }: { params: Promise<{ id: 
         employers={(employers ?? []) as { id: string; name: string }[]}
         jobSites={(sites ?? []) as { id: string; name: string }[]}
         aiAvailable={ctx.entitlements.has("ai_diary")}
+        aiEnabled={isAiEnabled()}
         skillSuggestions={suggestions.skills}
         toolSuggestions={suggestions.tools}
         initial={{

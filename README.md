@@ -40,7 +40,8 @@ npm run dev                  # http://localhost:3000
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | ✅ | Publishable (anon) key. Safe in the browser, because RLS protects data |
 | `SUPABASE_SECRET_KEY` | for deletion / Stripe | Service-role key. **Server only.** Used for account deletion and the Stripe webhook |
 | `NEXT_PUBLIC_SITE_URL` | ✅ in prod | Public URL, used in Stripe redirects |
-| `ANTHROPIC_API_KEY` | for AI | Enables AI diary writing, assistant, receipt scanning and weekly recaps |
+| `ANTHROPIC_API_KEY` | for AI | Enables AI diary writing, assistant, receipt scanning and weekly AI summaries. **Leave unset to run in no-AI mode**: every AI button, page and marketing mention is hidden |
+| `AI_DISABLED` | optional | `true` forces no-AI mode even if a key is set |
 | `ANTHROPIC_MODEL` | optional | Defaults to `claude-opus-5-5`. A cheaper model can be set here |
 | `GEOCODER_PROVIDER` | optional | `mapbox`, `google`, `nominatim` or `none` (default) |
 | `MAPBOX_ACCESS_TOKEN` / `GOOGLE_MAPS_API_KEY` | with provider | Reverse-geocoding key. **Server only** |

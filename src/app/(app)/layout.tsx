@@ -2,6 +2,7 @@ import { requireAppContext } from "@/lib/auth";
 import { getActiveSession } from "@/lib/data/sessions";
 import { AppShell } from "@/components/shell/app-shell";
 import { PLANS } from "@/lib/plans";
+import { isAiEnabled } from "@/lib/ai/config";
 import type { Employer, JobSite } from "@/lib/types";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -18,6 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       user={{ id: ctx.userId, name: ctx.profile.full_name, tier: ctx.entitlements.tier }}
       unreadCount={unread.count ?? 0}
       features={PLANS[ctx.entitlements.tier].features}
+      aiEnabled={isAiEnabled()}
       clock={{
         session,
         employers: (employers.data ?? []) as Pick<Employer, "id" | "name" | "is_primary">[],

@@ -8,8 +8,8 @@ Things only you can do (accounts, keys, settings). Tick them off as you go and t
       [`supabase/migrations/20261117000001_change_reason_once.sql`](../supabase/migrations/20261117000001_change_reason_once.sql) and click **Run**. Safe to run more than once.
 - [ ] **2. Turn email confirmation back on.** Supabase → Authentication → Sign In / Providers → Email → **Confirm email: ON** → Save.
 - [ ] **3. Delete the test accounts.** Supabase → Authentication → Users → delete every user whose email starts with `e2e-`.
-- [ ] **4. Get an Anthropic API key** (turns on AI diary writing, receipt scanning, the assistant and weekly recaps).
-      console.anthropic.com → sign up → add a payment method and set a monthly spend limit → **API Keys → Create key**. Keep it somewhere safe. You'll paste it into Vercel in step 7.
+- [x] **4. AI: skipped for now.** The app runs in no-AI mode: no AI buttons, pages or promises anywhere.
+      If you ever want AI later, create a key at console.anthropic.com (set a spend limit), add `ANTHROPIC_API_KEY` in Vercel and redeploy. Every AI feature then appears automatically.
 
 ## B. Put it online (about 30–60 minutes)
 
@@ -20,7 +20,6 @@ Things only you can do (accounts, keys, settings). Tick them off as you go and t
   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` = your publishable key
   - `SUPABASE_SECRET_KEY` = Supabase → Project Settings → API Keys → **secret** key (needed for account deletion)
   - `NEXT_PUBLIC_SITE_URL` = `https://your-domain`
-  - `ANTHROPIC_API_KEY` = the key from step 4
   - `GEOCODER_PROVIDER` = `mapbox` and `MAPBOX_ACCESS_TOKEN` = your Mapbox token (step 9)
   - optional for a free beta: `BETA_ALL_PRO` = `true`
 - [ ] **8. Connect your domain** in Vercel (Project → Settings → Domains) and follow its DNS instructions.

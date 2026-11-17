@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Logo } from "@/components/brand";
+import { isAiEnabled } from "@/lib/ai/config";
 
 export const metadata: Metadata = { title: "Privacy & location" };
 
@@ -31,16 +32,18 @@ export default function PrivacyPage() {
             <li>Files are stored privately and are only shown through short-lived links.</li>
             <li>Changes to timesheet times are kept in an audit trail so you can show what changed and when.</li>
             <li>You can download all of your data, or permanently delete your account, from Settings.</li>
-          </ul>
-        </section>
-        <section>
-          <h2 className="text-lg font-semibold">AI features</h2>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-muted-foreground">
-            <li>When you use an AI feature, the text or image you submit is sent to our AI provider to produce a response. We don&apos;t use it for anything else.</li>
-            <li>AI output can be wrong. It never replaces qualified supervision, official training, Australian Standards or a professional safety assessment.</li>
             <li>Expenses are never automatically marked as tax-deductible. Check with a registered tax agent.</li>
           </ul>
         </section>
+        {isAiEnabled() ? (
+          <section>
+            <h2 className="text-lg font-semibold">AI features</h2>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-muted-foreground">
+              <li>When you use an AI feature, the text or image you submit is sent to our AI provider to produce a response. We don&apos;t use it for anything else.</li>
+              <li>AI output can be wrong. It never replaces qualified supervision, official training, Australian Standards or a professional safety assessment.</li>
+            </ul>
+          </section>
+        ) : null}
       </div>
     </div>
   );

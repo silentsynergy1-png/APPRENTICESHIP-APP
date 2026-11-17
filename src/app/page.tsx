@@ -15,9 +15,10 @@ import {
 import { Logo } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { PLANS } from "@/lib/plans";
+import { PLANS, planHighlights } from "@/lib/plans";
+import { isAiEnabled } from "@/lib/ai/config";
 
-const features = [
+const featureList = (ai: boolean) => [
   {
     icon: Clock,
     title: "One-tap clock in",
@@ -31,7 +32,9 @@ const features = [
   {
     icon: BookOpen,
     title: "A diary you'll actually keep",
-    body: "Jot rough notes on the job. AI tidies them into a professional entry without adding anything you didn't do.",
+    body: ai
+      ? "Jot rough notes on the job. AI tidies them into a professional entry without adding anything you didn't do."
+      : "Jot quick notes on the job, add photos and log the skills you practised. Search every past job in seconds.",
   },
   {
     icon: GraduationCap,
@@ -46,11 +49,15 @@ const features = [
   {
     icon: Receipt,
     title: "Receipts sorted",
-    body: "Snap a receipt and check the extracted details. Monthly reports are ready to review at tax time.",
+    body: ai
+      ? "Snap a receipt and check the extracted details. Monthly reports are ready to review at tax time."
+      : "Photograph receipts, sort them by category and get monthly reports ready to review at tax time.",
   },
 ];
 
 export default function Landing() {
+  const ai = isAiEnabled();
+  const features = featureList(ai);
   return (
     <div className="min-h-dvh bg-background">
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur-md">
@@ -124,7 +131,7 @@ export default function Landing() {
                   "Location is captured only when you clock in, clock out or ask. There's no background tracking.",
                   "Your employer can't see your data. You decide what you export and share.",
                   "Download everything or delete your account at any time.",
-                  "AI suggestions are clearly marked and never replace your supervisor or the standards.",
+                  ...(ai ? ["AI suggestions are clearly marked and never replace your supervisor or the standards."] : []),
                 ].map((t) => (
                   <li key={t} className="flex gap-3">
                     <Check className="mt-0.5 size-4 shrink-0 text-success" />
@@ -155,7 +162,9 @@ export default function Landing() {
               </div>
               <div className="mt-4 flex items-center gap-2 rounded-2xl border border-dashed border-border p-4 text-[13px] text-muted-foreground">
                 <Sparkles className="size-4 text-primary" />
-                “Ran cable through roof space, installed 4 double GPOs” becomes a structured diary entry.
+                {ai
+                  ? "“Ran cable through roof space, installed 4 double GPOs” becomes a structured diary entry."
+                  : "Clock out, and your diary entry is ready with the times, site and hours already filled in."}
               </div>
               <p className="mt-4 text-[11.5px] text-muted-foreground">Illustration only. This isn&apos;t live data.</p>
             </div>
@@ -192,7 +201,7 @@ export default function Landing() {
                     </div>
                     <p className="mt-2 text-[14px] text-muted-foreground">{p.tagline}</p>
                     <ul className="mt-6 space-y-2.5 text-[14px]">
-                      {p.highlights.map((h) => (
+                      {planHighlights(tier, ai).map((h) => (
                         <li key={h} className="flex gap-2.5">
                           <Check className="mt-0.5 size-4 shrink-0 text-primary" />
                           {h}

@@ -29,6 +29,8 @@ export interface PlanDefinition {
     aiRequestsPerDay: number;
   };
   highlights: string[];
+  /** Extra highlights shown only when AI is enabled on this deployment. */
+  aiHighlights: string[];
 }
 
 export const PLANS: Record<PlanTier, PlanDefinition> = {
@@ -46,6 +48,7 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
       "Basic progress tracking",
       "Tool inventory (up to 25 tools)",
     ],
+    aiHighlights: [],
   },
   pro: {
     tier: "pro",
@@ -67,12 +70,12 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
     limits: { diaryEntriesPerMonth: null, tools: null, jobSites: null, aiRequestsPerDay: 150 },
     highlights: [
       "Unlimited diary entries, tools & job sites",
-      "AI diary writing & apprentice assistant",
-      "Expenses with AI receipt scanning",
+      "Expense tracking with receipt photos",
       "PDF timesheet & expense reports",
       "Document vault with expiry reminders",
-      "Weekly AI recap & advanced analytics",
+      "Weekly recap & advanced analytics",
     ],
+    aiHighlights: ["AI diary writing & apprentice assistant", "AI receipt scanning & weekly AI summary"],
   },
 };
 
@@ -110,6 +113,11 @@ export function resolveEntitlements(subscription: { plan: PlanTier; status: stri
     has: (f) => plan.features.includes(f),
     betaOverride: betaOverride && !paidPro,
   };
+}
+
+export function planHighlights(tier: PlanTier, aiEnabled: boolean): string[] {
+  const p = PLANS[tier];
+  return aiEnabled ? [...p.highlights.slice(0, 1), ...p.aiHighlights, ...p.highlights.slice(1)] : p.highlights;
 }
 
 export const paymentsEnabled = () =>

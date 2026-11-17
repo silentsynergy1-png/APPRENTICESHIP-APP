@@ -67,7 +67,8 @@ function makePng(file) {
   await page.waitForURL(/\/diary\/new\?session=/);
   check("diary prompt opens a session-linked entry", await page.getByText("Linked session").isVisible());
   check("employer prefilled from session", (await page.locator("#employer_id option:checked").textContent()) === "Westside Electrical");
-  check("AI button gated for Free plan", await page.getByRole("link", { name: /Improve with AI/ }).isVisible());
+  const aiOn = await page.getByText(/Improve with AI/).count();
+  check("AI row hidden when AI is off (or gated when on)", aiOn === 0 || (await page.getByRole("link", { name: /Improve with AI/ }).isVisible()));
 
   await page.fill("#raw_notes", "Helped install lights, ran cable through ceiling, drilled holes and assisted electrician with testing.");
   await page.fill("#title", "Lighting install, upstairs");

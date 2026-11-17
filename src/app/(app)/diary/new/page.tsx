@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { z } from "zod";
 import { requireAppContext } from "@/lib/auth";
+import { isAiEnabled } from "@/lib/ai/config";
 import { diarySuggestions } from "@/lib/data/diary";
 import { breakMinutes, formatLocal, formatMinutes, sessionWorkedMinutes, todayKey, requestNow } from "@/lib/time/calc";
 import type { Break, WorkSession } from "@/lib/types";
@@ -68,6 +69,7 @@ export default async function NewDiaryPage({ searchParams }: { searchParams: Pro
         jobSites={(sites ?? []) as { id: string; name: string }[]}
         sessionSummary={summary}
         aiAvailable={ctx.entitlements.has("ai_diary")}
+        aiEnabled={isAiEnabled()}
         skillSuggestions={suggestions.skills}
         toolSuggestions={suggestions.tools}
         initial={{

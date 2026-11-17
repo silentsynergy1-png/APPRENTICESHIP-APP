@@ -19,6 +19,7 @@ export interface ShellProps {
   unreadCount: number;
   features: Feature[];
   clock: ClockPanelProps;
+  aiEnabled: boolean;
   children: React.ReactNode;
 }
 
@@ -26,7 +27,8 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-export function AppShell({ user, unreadCount, features, clock, children }: ShellProps) {
+export function AppShell({ user, unreadCount, features, clock, aiEnabled, children }: ShellProps) {
+  const navItems = aiEnabled ? NAV_ITEMS : NAV_ITEMS.filter((i) => i.href !== "/assistant");
   const pathname = usePathname();
   const [clockOpen, setClockOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
@@ -62,7 +64,7 @@ export function AppShell({ user, unreadCount, features, clock, children }: Shell
         </button>
 
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-4" aria-label="Main">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const on = isActive(pathname, item.href);
             const locked = item.feature && !features.includes(item.feature);
             return (
@@ -193,7 +195,7 @@ export function AppShell({ user, unreadCount, features, clock, children }: Shell
       <Dialog open={moreOpen} onOpenChange={setMoreOpen}>
         <DialogContent title="Menu">
           <div className="grid grid-cols-3 gap-2">
-            {NAV_ITEMS.filter((i) => !(MOBILE_PRIMARY as readonly string[]).includes(i.href)).map((item) => {
+            {navItems.filter((i) => !(MOBILE_PRIMARY as readonly string[]).includes(i.href)).map((item) => {
               const locked = item.feature && !features.includes(item.feature);
               return (
                 <Link

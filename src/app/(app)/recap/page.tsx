@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { AlertTriangle, ArrowLeft, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { requireAppContext } from "@/lib/auth";
 import { computeWeekStats } from "@/lib/data/recap";
-import { getAnthropic } from "@/lib/ai/client";
+import { isAiEnabled } from "@/lib/ai/config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, Badge, Stat } from "@/components/ui/misc";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,8 @@ export default async function RecapPage({ searchParams }: { searchParams: Promis
     ctx.supabase.from("weekly_recaps").select("*").eq("week_start", weekStart).maybeSingle(),
   ]);
   const aiAllowed = ctx.entitlements.has("weekly_recap");
-  const aiConfigured = Boolean(getAnthropic());
+  const aiConfigured = isAiEnabled();
+  const showSummary = aiConfigured || Boolean(recap?.summary);
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -78,7 +79,8 @@ export default async function RecapPage({ searchParams }: { searchParams: Promis
         </Alert>
       ) : null}
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[1.5fr_1fr]">
+      <div className={showSummary ? "mt-5 grid gap-5 lg:grid-cols-[1.5fr_1fr]" : "mt-5 grid gap-5 md:grid-cols-2"}>
+        {showSummary ? (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -111,7 +113,8 @@ export default async function RecapPage({ searchParams }: { searchParams: Promis
             )}
           </CardContent>
         </Card>
-        <div className="grid content-start gap-5">
+        ) : null}
+        <div className={showSummary ? "grid content-start gap-5" : "contents"}>
           <Card>
             <CardHeader>
               <CardTitle>Skills practised</CardTitle>

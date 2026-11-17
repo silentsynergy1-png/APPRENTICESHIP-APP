@@ -55,6 +55,7 @@ export function DiaryForm({
   jobSites,
   sessionSummary,
   aiAvailable,
+  aiEnabled,
   skillSuggestions,
   toolSuggestions,
 }: {
@@ -64,6 +65,7 @@ export function DiaryForm({
   jobSites: Option[];
   sessionSummary?: string | null;
   aiAvailable: boolean;
+  aiEnabled: boolean;
   skillSuggestions: string[];
   toolSuggestions: string[];
 }) {
@@ -213,10 +215,12 @@ export function DiaryForm({
 
       <Card>
         <CardContent className="grid gap-4">
-          <Field label="What did you do today?" htmlFor="raw_notes" hint="Rough notes are fine, e.g. “helped install lights, ran cable through ceiling, drilled holes, assisted with testing”." error={fieldErrors.raw_notes}>
+          <Field label="What did you do today?" htmlFor="raw_notes" hint={aiEnabled ? "Rough notes are fine, e.g. “helped install lights, ran cable through ceiling, drilled holes, assisted with testing”." : "Plain words are fine. Write it the way you’d tell a mate."} error={fieldErrors.raw_notes}>
             <Textarea id="raw_notes" value={v.raw_notes} onChange={(e) => set("raw_notes", e.target.value)} rows={4} maxLength={8000} placeholder="Jot down the day in your own words…" />
           </Field>
 
+          {aiEnabled ? (
+            <>
           <div className="flex flex-wrap items-center gap-2">
             {aiAvailable ? (
               <Button type="button" variant="subtle" onClick={improve} disabled={ai.loading}>
@@ -295,6 +299,9 @@ export function DiaryForm({
                 </Button>
               </div>
             </div>
+          ) : null}
+
+            </>
           ) : null}
 
           <Field label="Title" htmlFor="title">

@@ -139,12 +139,20 @@ function makePng(file, rgb) {
   await page.screenshot({ path: `${SHOTS}/m3-notifications.png`, fullPage: true });
 
   /* -------------------------------- Assistant -------------------------------- */
+  await page.goto(`${BASE}/dashboard`);
+  const navHasAi = await page.locator("aside nav").getByText("AI Assistant").count();
   await page.goto(`${BASE}/assistant`);
-  const configured = !(await page.getByText("AI isn't set up yet").isVisible());
+  const configured = !page.url().includes("/dashboard");
   if (!configured) {
-    check("assistant explains missing API key", true);
-    const r = await page.evaluate(async () => { const res = await fetch("/api/ai/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: "hi" }) }); return { s: res.status, j: await res.json() }; });
-    check("chat API returns clear 503 without key", r.s === 503 && /ANTHROPIC_API_KEY/.test(r.j.error));
+    check("no-AI mode: assistant hidden from navigation", navHasAi === 0);
+    check("no-AI mode: /assistant redirects to dashboard", page.url().includes("/dashboard"));
+    const r = await page.evaluate(async () => { const res = await fetch("/api/ai/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: "hi" }) }); return { s: res.status }; });
+    check("no-AI mode: chat API refuses cleanly", r.s === 503);
+    await page.goto(`${BASE}/expenses?new=1`);
+    check("no-AI mode: no receipt scanning promise", !(await page.getByText("We'll read the merchant").isVisible()));
+    await page.keyboard.press("Escape");
+    await page.goto(`${BASE}/`);
+    check("no-AI mode: landing page doesn't mention AI", !(await page.locator("body").innerText()).includes("AI "));
   } else {
     await page.getByRole("textbox", { name: "Message" }).fill("In one sentence, what is an RCD?");
     await page.getByRole("button", { name: "Send" }).click();
