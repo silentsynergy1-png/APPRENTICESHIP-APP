@@ -62,11 +62,15 @@ class NominatimGeocoder implements ReverseGeocoder {
   }
 }
 
+/**
+ * Uses Mapbox "permanent" geocoding: the app stores the returned address on each work
+ * session, and Mapbox's terms only allow storing results from permanent requests.
+ */
 class MapboxGeocoder implements ReverseGeocoder {
   readonly name = "mapbox";
   constructor(private token: string) {}
   async reverse(lat: number, lng: number) {
-    const url = `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${lng}&latitude=${lat}&country=au&limit=1&access_token=${encodeURIComponent(this.token)}`;
+    const url = `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${lng}&latitude=${lat}&country=au&limit=1&permanent=true&access_token=${encodeURIComponent(this.token)}`;
     const data = (await fetchJson(url)) as {
       features?: { properties?: { full_address?: string; name?: string; context?: Record<string, { name?: string; region_code?: string }> } }[];
     };
